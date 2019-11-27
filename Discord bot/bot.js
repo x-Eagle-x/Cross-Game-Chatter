@@ -27,6 +27,6 @@ bot.on("message", function sendMessages(msg) {
 	if(msg.author.bot)
 		return 0;
 	
-	FileStream.writeFile("discord_messages_i.txt", Util.format("[&x05%s&x01] &x04#%s&x01 %s&x01: %s", new Date().toLocaleTimeString(), msg.channel.name, (msg.author.bot ? "&x04BOT " : "&x05User ") + msg.author.username, msg), (err) => {
+	FileStream.writeFile("discord_messages_i.txt", Util.format("[&x05%s&x01] &x04#%s&x01 &x05%s&x01: %s", new Date().toLocaleTimeString(), msg.channel.name, msg.author.username, msg), (err) => {
     if (err) throw err;});
 })
