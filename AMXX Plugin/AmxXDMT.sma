@@ -45,6 +45,7 @@ public cmdMessage(id)
 	read_args(szMessage, charsmax(szMessage));
 	get_time("%S:%M:%H", szTime, charsmax(szTime));
 	get_user_team(id, szTeam, charsmax(szTeam));
+	remove_quotes(szMessage);
 	write_file(g_szOutputFileLoc, fmt("[%s] %s %n: %s", szTime, szTeam, id, szMessage), 0);
 }
 
