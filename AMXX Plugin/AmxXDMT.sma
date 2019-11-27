@@ -43,9 +43,16 @@ public cmdMessage(id)
 {
 	new szMessage[128], szTime[16], szTeam[16];
 	read_args(szMessage, charsmax(szMessage));
+	
+	remove_quotes(szMessage);
+	trim(szMessage);
+	
+	if(equal(szMessage, ""))
+		return;
+	
 	get_time("%H:%M:%S", szTime, charsmax(szTime));
 	get_user_team(id, szTeam, charsmax(szTeam));
-	remove_quotes(szMessage);
+
 	write_file(g_szOutputFileLoc, fmt("[%s] %s %n: %s", szTime, szTeam, id, szMessage), 0);
 }
 
