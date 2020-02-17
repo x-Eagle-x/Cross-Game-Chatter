@@ -50,8 +50,8 @@ public cmd_Chat(id)
 	new szMessage[MAX_MSG_LENGTH];
 
 	read_args(szMessage, charsmax(szMessage));
-	trim(szMessage);
 	remove_quotes(szMessage);
+        trim(szMessage);
 
 	if (equal(szMessage, ""))
 		return;
