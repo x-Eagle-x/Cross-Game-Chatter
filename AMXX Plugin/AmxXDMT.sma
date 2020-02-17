@@ -20,7 +20,7 @@
 #define MAX_DMSG_LENGTH 128
 
 new g_iServer;
-new szData[MAX_MSG_LENGTH];
+new szData[MAX_DMSG_LENGTH];
 
 public plugin_init()
 {
