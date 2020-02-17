@@ -35,7 +35,7 @@ public tskReadLine()
 	{
 		read_file(g_szInputFileLoc, 0, g_szInputMessage, charsmax(g_szInputMessage));
 		CC_SendMessage(0, g_szInputMessage);
-		g_iInputFileModTime = g_iInputTemp;
+		g_iInputFileModTime = g_iInputTemp
 	}
 }
 
@@ -44,7 +44,85 @@ public cmdMessage(id)
 	new szMessage[128], szTime[16], szTeam[16];
 	read_args(szMessage, charsmax(szMessage));
 	
+	remove_quotes(szMessage);/*
+	AmxXDMT (Amx Mod X Discord Message Transmitter)
+
+	More info at: https://forums.alliedmods.net/showthread.php?t=319940
+	Source available at: https://github.com/4D1G06/AmxXDMT
+
+	https://www.youtube.com/watch?v=7AqTB30d-Mc
+*/
+
+#include <amxmodx>
+#include <cromchat>
+#include <sockets>
+
+#pragma semicolon 1
+
+#define VERSION "1.0s" // Stable release
+#define PORT 1337
+
+#define MAX_MSG_LENGTH 64
+#define MAX_DMSG_LENGTH 128
+
+new g_iServer;
+new szData[MAX_MSG_LENGTH];
+
+public plugin_init()
+{
+	register_plugin("AmxXDMT", VERSION, "thEsp");
+
+	if (Initialize())
+		return set_fail_state("[Critical] AmxXDMT: Failed to initialze the (socket) server.");
+
+	register_clcmd("say", "cmd_Chat");
+//  register_clcmd("say_team", "cmd_Chat");
+
+	return 0x0;
+}
+
+bool:Initialize()
+{
+	new Error;
+	g_iServer = socket_open("127.0.0.1", PORT, _, Error);
+
+	set_task(0.1, "tsk_Chat", .flags = "b");
+
+	return bool:Error;
+}
+
+public cmd_Chat(id)
+{
+	new szMessage[MAX_MSG_LENGTH];
+
+	read_args(szMessage, charsmax(szMessage));
+	trim(szMessage);
 	remove_quotes(szMessage);
+
+	if (equal(szMessage, ""))
+		return;
+
+	format(szMessage, charsmax(szMessage), "(%n): %s", id, szMessage);
+	socket_send(g_iServer, szMessage, charsmax(szMessage));
+}
+
+public tsk_Chat()
+{
+	if (socket_is_readable(g_iServer, 0))
+	{
+		socket_recv(g_iServer, szData, charsmax(szData));
+
+		CC_SendMessage(0, szData);
+	}
+}
+
+public plugin_end()
+{
+//	socket_close(g_iServer);
+
+//  the server (nodejs) will throw an error if I close the socket here.
+//  if someone is able to fix this problem, please pull a request (along with an issue) on github
+}
 	trim(szMessage);
 	
 	if(equal(szMessage, ""))
