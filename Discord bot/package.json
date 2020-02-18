@@ -2,7 +2,7 @@
 	"name": "YOUR BOT NAME",
 	"version": "1.0.0",
 	"description": "YOUR BOT DESC.",
-	"main": "bot.js",
+	"main": "server.js",
 	"author": "YOUR NAME",
 	"dependencies": {
 		"discord.js": "^11.5.1",
