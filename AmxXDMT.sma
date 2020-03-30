@@ -63,7 +63,11 @@ public cmd_Chat(id)
 
 public tsk_Chat()
 {
+	#if AMXX_VERSION_NUM < 190
+	if (socket_change(g_iServer, 0))
+	#else
 	if (socket_is_readable(g_iServer, 0))
+	#endif
 	{
 		socket_recv(g_iServer, szData, charsmax(szData));
 		CC_SendMessage(0, szData);
