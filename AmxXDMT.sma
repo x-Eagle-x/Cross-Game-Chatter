@@ -16,8 +16,7 @@
 #define VERSION "1.0s" // Stable release
 #define PORT 1337
 
-#define MAX_MSG_LENGTH 64
-#define MAX_DMSG_LENGTH 128
+#define MAX_MSG_LENGTH 128
 
 new g_iServer;
 new szData[MAX_DMSG_LENGTH];
@@ -37,11 +36,8 @@ public plugin_init()
 
 bool:Initialize()
 {
-	new Error;
-	g_iServer = socket_open("127.0.0.1", PORT, _, Error);
-
+	new Error, g_iServer = socket_open("127.0.0.1", PORT, _, Error);
 	set_task(0.1, "tsk_Chat", .flags = "b");
-
 	return bool:Error;
 }
 
