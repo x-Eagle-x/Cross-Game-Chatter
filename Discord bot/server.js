@@ -1,5 +1,10 @@
+/*
+	Cross-Game Chatter v1.1
+	By thEsp - https://github.com/4D1G06/Cross-Game-Chatter
+*/
+
 const port = 1337;
-const targetChannel = "---------------";
+const targetChannel = "-- ENTER CHANNEL ID HERE --";
 
 const auth = require("./auth.json");
 const net = require("net");
@@ -12,14 +17,21 @@ var message;
 
 function initializeServer()
 {
-	var server = net.createServer(function(socket) {
-
-		socket.on("data", function(data) {
+	var server = net.createServer(function(socket)
+	{
+		socket.on("data", function(data)
+		{
 			message = data.toString("utf8");
 			bot.channels.get(targetChannel).send(message);
 		});
-
-		bot.on("message", function sendMessage(msg) {
+		
+		socket.on("close", function()
+		{
+			server.close()
+		});
+		
+		bot.on("message", function sendMessage(msg)
+		{
 			if (!msg.author.bot)
 				socket.write("(&x03" + msg.author.username + "&x01 - &x03#" + msg.channel.name + "&x01): &x04" + msg);
 		});
