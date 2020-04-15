@@ -83,8 +83,13 @@ public tsk_Chat()
 	#endif
 	{
 		socket_recv(g_iServer, szData, charsmax(szData));
+		
+		if (!szData[0])
+			goto check_if_running;
+			
 		CC_SendMessage(0, szData);
 
+check_if_running:
 		if (!Running())
 			Close();
 	}
