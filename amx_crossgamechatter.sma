@@ -84,7 +84,7 @@ public tsk_Chat()
 	{
 		socket_recv(g_iServer, szData, charsmax(szData));
 		
-		if (!szData[0])
+		if (!szData[0] || szData[0] == '^n' && !szData[1])
 			goto check_if_running;
 			
 		CC_SendMessage(0, szData);
