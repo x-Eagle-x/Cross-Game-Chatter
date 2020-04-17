@@ -21,7 +21,6 @@
 #define MAX_DMSG_LENGTH 128
 
 new g_iServer, bool:g_bRunning;
-new szData[MAX_DMSG_LENGTH];
 
 public plugin_init()
 {
@@ -82,6 +81,7 @@ public tsk_Chat()
 	if (socket_is_readable(g_iServer, 0))
 	#endif
 	{
+		static szData[MAX_DMSG_LENGTH];
 		socket_recv(g_iServer, szData, charsmax(szData));
 		
 		if (!szData[0] || szData[0] == '^n' && !szData[1])
