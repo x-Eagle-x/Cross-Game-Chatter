@@ -2,7 +2,7 @@
 	AMXX CGC (Cross-Game Chatter)
 
 	More info at: https://forums.alliedmods.net/showthread.php?t=319940
-	Source available at: https://github.com/4D1G06/Cross-Game-Chatter
+	Source available at: https://github.com/x-Eagle-x/Cross-Game-Chatter
 
 	https://www.youtube.com/watch?v=7AqTB30d-Mc
 */
