@@ -4,11 +4,13 @@
 */
 
 const port = 1337;
-const targetChannel = "-- ENTER CHANNEL ID HERE --";
+const targetChannel = "- ID HERE -";
 
 const auth = require("./auth.json");
 const net = require("net");
 const discord = require("discord.js")
+
+require("events").EventEmitter.prototype._maxListeners = 0;
 
 const bot = new discord.Client({token: auth.token, autorun: true});
 bot.login(auth.token);
