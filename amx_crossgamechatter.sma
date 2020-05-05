@@ -13,27 +13,34 @@
 
 #pragma semicolon 1
 
-#define VERSION "1.1"
+#define VERSION "1.2"
 #define PORT 1337
 
 #define TSK_CHAT_INDEX 3210
 #define MAX_MSG_LENGTH 128
 #define MAX_DMSG_LENGTH 128
+#define MAX_DISCORD_MESSAGES 128 // <- Do whatever you want with this number.
 
 new g_iServer, bool:g_bRunning;
+new g_pMsgCvar, Array:g_aMessages;
+new bool:g_bDark[MAX_PLAYERS+1] = {true, ...};
 
 public plugin_init()
 {
-	register_plugin("CrossGameChat", VERSION, "thEsp");
+	register_plugin("Cross-Game Chatter", VERSION, "thEsp");
 
 	if (!Initialize())
 		return set_fail_state("[Critical] Cross-Game Chatter: Failed to initialze the (socket) server.");
 
+	register_dictionary("crossgamechatter.ini");
+
+	g_aMessages = ArrayCreate(MAX_DMSG_LENGTH, MAX_DISCORD_MESSAGES);
+	g_pMsgCvar = register_cvar("amx_cgc_store_messages", "1");
+
 	register_clcmd("say", "cmd_Chat");
 	register_clcmd("say_team", "cmd_Chat");
 	
-	g_bRunning = true;
-	return 0x0;
+	return (g_bRunning = true);
 }
 
 bool:Initialize()
@@ -56,6 +63,28 @@ Close()
 	g_bRunning = false;
 }
 
+ShowDiscordChat(index)
+{
+	new szMessage[MAX_DMSG_LENGTH];
+	static szMOTD[MAX_MOTD_LENGTH];
+	szMOTD[0] = 0;
+
+	if (g_bDark[index])
+		add(szMOTD, charsmax(szMOTD), "<style type=^"text/css^">body { font-family: Verdana; background-color: rgb(44, 47, 51); color: white }</style>");
+	else
+		add(szMOTD, charsmax(szMOTD), "<style type=^"text/css^">body { font-family: Verdana; background-color: white; color: black }</style>");
+
+	for (new iMsg = 0; iMsg < ArraySize(g_aMessages); iMsg++)
+	{
+		ArrayGetString(g_aMessages, iMsg, szMessage, charsmax(szMessage));
+
+		add(szMOTD, charsmax(szMOTD), szMessage);
+		add(szMOTD, charsmax(szMOTD), "<br/>");
+	}
+
+	show_motd(index, szMOTD, "Discord chat");
+}
+
 public cmd_Chat(id)
 {
 	new szMessage[MAX_MSG_LENGTH], szName[32];
@@ -67,6 +96,19 @@ public cmd_Chat(id)
 
 	if (equal(szMessage, ""))
 		return;
+
+	if (equali(szMessage, "/discord"))
+	{
+		ShowDiscordChat(id);
+		return;
+	}
+
+	if (equali(szMessage, "/discordtheme"))
+	{
+		g_bDark[id] = !g_bDark[id];
+		CC_SendMessage(id, "%L", LANG_PLAYER, g_bDark[id] ? "THEME_DARK" : "THEME_LIGHT");	
+		return;
+	}
 
 	format(szMessage, charsmax(szMessage), "(%s): %s", szName, szMessage);
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
@@ -88,6 +130,14 @@ public tsk_Chat()
 			goto check_if_running;
 			
 		CC_SendMessage(0, szData);
+		if (get_pcvar_num(g_pMsgCvar))
+		{
+			CC_RemoveColors(szData, charsmax(szData));
+			if (ArraySize(g_aMessages) >= MAX_DISCORD_MESSAGES)
+				ArrayClear(g_aMessages); // <- That's temporary, which means it will be "fixed" in the next release.
+
+			ArrayPushString(g_aMessages, szData);
+		}
 
 check_if_running:
 		if (!Running())
@@ -97,6 +147,7 @@ check_if_running:
 
 public plugin_end()
 {
+	ArrayDestroy(g_aMessages);
 	if (!g_bRunning)
 		socket_close(g_iServer);
 
