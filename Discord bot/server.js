@@ -1,5 +1,5 @@
 /*
-	Cross-Game Chatter v1.1
+	Cross-Game Chatter v1.2
 	By thEsp - https://github.com/4D1G06/Cross-Game-Chatter
 */
 
