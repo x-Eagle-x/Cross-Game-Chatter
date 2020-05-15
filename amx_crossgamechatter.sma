@@ -94,7 +94,7 @@ public cmd_Chat(id)
 	remove_quotes(szMessage);
 	trim(szMessage);
 
-	if (equal(szMessage, ""))
+	if (!szMessage[0])
 		return;
 
 	if (equali(szMessage, "/discord"))
