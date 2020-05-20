@@ -159,12 +159,13 @@ public tsk_Info()
 
 SendInfo()
 {
-	static szMap[32], szMessage[64], szTemp[32], iPlayers;
+	static szMap[32], szMessage[64], szTemp[32], iPlayers, iMaxPlayers;
 
 	get_mapname(szMap, charsmax(szMap));
 	get_players(szTemp, iPlayers);
+	iMaxPlayers = get_maxplayers();
 
-	format(szMessage, charsmax(szMessage), "Map: %s [%i/32]", szMap, iPlayers);
+	format(szMessage, charsmax(szMessage), "Map: %s [%i/%i]", szMap, iPlayers, iMaxPlayers);
 
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
 }
