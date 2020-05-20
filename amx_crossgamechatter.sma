@@ -13,10 +13,12 @@
 
 #pragma semicolon 1
 
-#define VERSION "1.2"
+#define VERSION "1.3"
 #define PORT 1337
 
 #define TSK_CHAT_INDEX 3210
+#define TSK_INFO_INDEX 3900
+
 #define MAX_MSG_LENGTH 128
 #define MAX_DMSG_LENGTH 128
 #define MAX_DISCORD_MESSAGES 128 // <- Do whatever you want with this number.
@@ -46,7 +48,10 @@ public plugin_init()
 bool:Initialize()
 {
 	new Error; g_iServer = socket_open("127.0.0.1", PORT, _, Error);
+
 	set_task(0.1, "tsk_Chat", TSK_CHAT_INDEX, .flags = "b");
+	set_task(1.0, "tsk_Info", TSK_INFO_INDEX, .flags = "b");
+
 	return !bool:Error;
 }
 
@@ -116,6 +121,12 @@ public cmd_Chat(id)
 
 public tsk_Chat()
 {
+	if (!Running())
+	{
+		Close();
+		return;
+	}
+
 	// Note: this is executed ONCE during compilation. A macro function isn't really needed.
 	#if AMXX_VERSION_NUM < 190
 	if (socket_change(g_iServer, 0))
@@ -124,25 +135,38 @@ public tsk_Chat()
 	#endif
 	{
 		static szData[MAX_DMSG_LENGTH];
-		socket_recv(g_iServer, szData, charsmax(szData));
-		
+		socket_recv(g_iServer, szData, charsmax(szData));	
+
 		if (!szData[0] || szData[0] == '^n' && !szData[1])
-			goto check_if_running;
+			return;
 			
 		CC_SendMessage(0, szData);
 		if (get_pcvar_num(g_pMsgCvar))
 		{
 			CC_RemoveColors(szData, charsmax(szData));
 			if (ArraySize(g_aMessages) >= MAX_DISCORD_MESSAGES)
-				ArrayClear(g_aMessages); // <- That's temporary, which means it will be "fixed" in the next release.
+				ArrayClear(g_aMessages);
 
 			ArrayPushString(g_aMessages, szData);
 		}
-
-check_if_running:
-		if (!Running())
-			Close();
 	}
+}
+
+public tsk_Info()
+{
+	SendInfo();
+}
+
+SendInfo()
+{
+	static szMap[32], szMessage[64], szTemp[32], iPlayers;
+
+	get_mapname(szMap, charsmax(szMap));
+	get_players(szTemp, iPlayers);
+
+	format(szMessage, charsmax(szMessage), "Map: %s [%i/32]", szMap, iPlayers);
+
+	socket_send(g_iServer, szMessage, charsmax(szMessage));
 }
 
 public plugin_end()
