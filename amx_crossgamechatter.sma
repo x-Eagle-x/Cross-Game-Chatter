@@ -13,7 +13,7 @@
 
 #pragma semicolon 1
 
-#define VERSION "1.3"
+#define VERSION "1.4"
 #define PORT 1337
 
 #define TSK_CHAT_INDEX 3210
