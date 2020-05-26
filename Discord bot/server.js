@@ -1,10 +1,10 @@
 /*
-	Cross-Game Chatter v1.3
+	Cross-Game Chatter v1.4
 	By thEsp - https://github.com/4D1G06/Cross-Game-Chatter
 */
 
 const port = 1337;
-const targetChannel = "- ID GOES HERE-";
+const targetChannels = ["add as many", "as you want"];
 
 const auth = require("./auth.json");
 const net = require("net");
@@ -27,19 +27,19 @@ function initializeServer()
 
 			if (message.startsWith("Map"))
 			{
-    				bot.user.setStatus("online");
-    				bot.user.setPresence({
-        				game: {
-            					name: message,
-            					type: "Playing",
-            					afk: false,
-            					url: "https://github.com/x-Eagle-x/Cross-Game-Chatter/"
-        				}
+    			bot.user.setStatus("online");
+    			bot.user.setPresence({
+        			game: {
+            			name: message,
+            			type: "Playing",
+            			afk: false,
+            			url: "https://github.com/x-Eagle-x/Cross-Game-Chatter/"
+        			}
 				});
 			}
 			else
 			{
-				bot.channels.get(targetChannel).send(message);			
+				targetChannels.forEach(channel => bot.channels.get(channel).send(message));	
 			}
 		});
 		
