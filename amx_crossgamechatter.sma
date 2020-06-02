@@ -13,7 +13,7 @@
 
 #pragma semicolon 1
 
-#define VERSION "1.4"
+#define VERSION "1.5"
 #define PORT 1337
 
 #define TSK_CHAT_INDEX 3210
@@ -24,8 +24,9 @@
 #define MAX_DISCORD_MESSAGES 128 // <- Do whatever you want with this number.
 
 new g_iServer, bool:g_bRunning;
-new g_pMsgCvar, Array:g_aMessages;
-new bool:g_bDark[MAX_PLAYERS+1] = {true, ...};
+new g_pMsgCvar, g_pMentionFixCvar, g_pMaxMentionWarnings, Array:g_aMessages;
+
+new bool:g_bDark[33] = {true, ...}, g_WarningsIssued[33];
 
 public plugin_init()
 {
@@ -38,6 +39,8 @@ public plugin_init()
 
 	g_aMessages = ArrayCreate(MAX_DMSG_LENGTH, MAX_DISCORD_MESSAGES);
 	g_pMsgCvar = register_cvar("amx_cgc_store_messages", "1");
+	g_pMentionFixCvar = register_cvar("amx_cgc_mention_fix", "1");
+	g_pMaxMentionWarnings = register_cvar("amx_cgc_mention_warns", "3");
 
 	register_clcmd("say", "cmd_Chat");
 	register_clcmd("say_team", "cmd_Chat");
@@ -100,23 +103,35 @@ public cmd_Chat(id)
 	trim(szMessage);
 
 	if (!szMessage[0])
-		return;
+		return PLUGIN_CONTINUE;
 
 	if (equali(szMessage, "/discord"))
 	{
 		ShowDiscordChat(id);
-		return;
+		return PLUGIN_CONTINUE;
 	}
 
 	if (equali(szMessage, "/discordtheme"))
 	{
 		g_bDark[id] = !g_bDark[id];
 		CC_SendMessage(id, "%L", LANG_PLAYER, g_bDark[id] ? "THEME_DARK" : "THEME_LIGHT");	
-		return;
+		return PLUGIN_CONTINUE;
 	}
 
+	if (get_pcvar_num(g_pMentionFixCvar) && containi(szMessage, "@everyone") != -1)
+	{
+		if (g_WarningsIssued[id] >= get_pcvar_num(g_pMaxMentionWarnings))
+			KickPlayer(szName);
+		else
+			CC_SendMessage(id, "%L", LANG_PLAYER, "MENTION_WARN", ++g_WarningsIssued[id]);
+	
+		return PLUGIN_HANDLED;
+	}
+	
 	format(szMessage, charsmax(szMessage), "(%s): %s", szName, szMessage);
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
+
+	return PLUGIN_CONTINUE;
 }
 
 public tsk_Chat()
@@ -168,6 +183,20 @@ SendInfo()
 	format(szMessage, charsmax(szMessage), "Map: %s [%i/%i]", szMap, iPlayers, iMaxPlayers);
 
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
+}
+
+KickPlayer(const name[])
+{
+	server_cmd("amx_kick ^"%s^" ^"%L^"", name, LANG_PLAYER, "MENTION_PUNISH");
+}
+
+#if AMXX_VERSION_NUM < 190
+public client_disconnect(id)
+#else
+public client_disconnected(id)
+#endif
+{
+	g_WarningsIssued[id] = 0;
 }
 
 public plugin_end()
