@@ -13,7 +13,7 @@
 
 #pragma semicolon 1
 
-#define VERSION "1.5"
+#define VERSION "1.4.31"
 #define PORT 1337
 
 #define TSK_CHAT_INDEX 3210
@@ -121,16 +121,12 @@ public cmd_Chat(id)
 	if (get_pcvar_num(g_pMentionFixCvar) && containi(szMessage, "@everyone") != -1)
 	{
 		if (g_WarningsIssued[id] >= get_pcvar_num(g_pMaxMentionWarnings))
-			KickPlayer(szName);
+			KickPlayer(id);
 		else
 			CC_SendMessage(id, "%L", LANG_PLAYER, "MENTION_WARN", ++g_WarningsIssued[id]);
 	
 		return PLUGIN_HANDLED;
 	}
-	
-	// Little fix
-	if (containi(szMessage, "discord.gg/") != -1)
-		return PLUGIN_CONTINUE;
 	
 	format(szMessage, charsmax(szMessage), "(%s): %s", szName, szMessage);
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
@@ -189,9 +185,9 @@ SendInfo()
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
 }
 
-KickPlayer(const name[])
+KickPlayer(index)
 {
-	server_cmd("amx_kick ^"%s^" ^"%L^"", name, LANG_PLAYER, "MENTION_PUNISH");
+	server_cmd("amx_kick #%i ^"%L^"", get_user_userid(index), LANG_PLAYER, "MENTION_PUNISH");
 }
 
 #if AMXX_VERSION_NUM < 190
