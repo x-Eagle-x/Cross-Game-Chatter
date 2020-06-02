@@ -1,6 +1,6 @@
 /*
 	Cross-Game Chatter v1.5
-	By thEsp - https://github.com/4D1G06/Cross-Game-Chatter
+	By thEsp - https://github.com/x-Eagle-x/Cross-Game-Chatter
 */
 
 const port = 1337;
