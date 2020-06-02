@@ -27,14 +27,14 @@ function initializeServer()
 
 			if (message.startsWith("Map"))
 			{
-    			bot.user.setStatus("online");
-    			bot.user.setPresence({
-        			game: {
-            			name: message,
-            			type: "Playing",
-            			afk: false,
-            			url: "https://github.com/x-Eagle-x/Cross-Game-Chatter/"
-        			}
+    				bot.user.setStatus("online");
+    				bot.user.setPresence({
+        				game: {
+            					name: message,
+            					type: "Playing",
+            					afk: false,
+            					url: "https://github.com/x-Eagle-x/Cross-Game-Chatter/"
+        				}
 				});
 			}
 			else
