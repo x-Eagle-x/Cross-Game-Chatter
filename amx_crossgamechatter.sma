@@ -128,6 +128,9 @@ public cmd_Chat(id)
 		return PLUGIN_HANDLED;
 	}
 	
+	if (containi(szMessage, "discord.gg/") != -1)
+		return PLUGIN_CONTINUE;
+	
 	format(szMessage, charsmax(szMessage), "(%s): %s", szName, szMessage);
 	socket_send(g_iServer, szMessage, charsmax(szMessage));
 
