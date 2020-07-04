@@ -1,10 +1,11 @@
 /*
-	Cross-Game Chatter v1.5
+	Cross-Game Chatter v1.6
 	By thEsp - https://github.com/x-Eagle-x/Cross-Game-Chatter
 */
 
 const port = 1337;
 const targetChannels = ["add as many", "as you want"];
+const inputChannels = ["ALL"]; // leave it so for all, put respectable indexes for specific channels
 
 const auth = require("./auth.json");
 const net = require("net");
@@ -49,9 +50,11 @@ function initializeServer()
 		});
 		
 		bot.on("message", function sendMessage(msg)
-		{
-			if (!msg.author.bot)
-				socket.write("(&x03" + msg.author.username + "&x01 - &x03#" + msg.channel.name + "&x01): &x04" + msg);
+		{	
+			if (msg.author.bot || (inputChannels[0] != "ALL" && !inputChannels.includes(msg.channel.id)))
+				return;
+			
+			socket.write("(&x03" + msg.author.username + "&x01 - &x03#" + msg.channel.name + "&x01): &x04" + msg);
 		});
 	});
 
