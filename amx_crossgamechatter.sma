@@ -21,6 +21,7 @@
 
 #define MAX_MSG_LENGTH 128
 #define MAX_DMSG_LENGTH 128
+#define MAX_MOTD_LENGTH 1536
 #define MAX_DISCORD_MESSAGES 128 // <- Do whatever you want with this number.
 
 new g_iServer, bool:g_bRunning;
