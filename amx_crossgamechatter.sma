@@ -207,10 +207,5 @@ public plugin_end()
 {
 	ArrayDestroy(g_aMessages);
 	if (!g_bRunning)
-		socket_close(g_iServer);
-
-	/*
-		If the relay (server) is closed, this socket will also be closed. 
-		This way you don't have to start the nodejs script each time server restarts (or map changes). 
-	*/	
+		socket_close(g_iServer);	
 }
