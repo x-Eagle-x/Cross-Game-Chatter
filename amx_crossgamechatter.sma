@@ -83,7 +83,7 @@ ShowDiscordChat(index)
 	else
 		add(szMOTD, charsmax(szMOTD), "<style type=^"text/css^">body { font-family: Verdana; background-color: white; color: black }</style>");
 
-	for (new iMsg = 0; iMsg < ArraySize(g_aMessages); iMsg++)
+	for (new iMsg = 0, iSize = ArraySize(g_aMessages); iMsg < iSize; iMsg++)
 	{
 		ArrayGetString(g_aMessages, iMsg, szMessage, charsmax(szMessage));
 
