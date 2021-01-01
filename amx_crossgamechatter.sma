@@ -54,7 +54,7 @@ bool:Initialize()
 	new Error; g_iServer = socket_open("127.0.0.1", PORT, _, Error);
 
 	set_task(0.1, "tsk_Chat", TSK_CHAT_INDEX, .flags = "b");
-	set_task(1.0, "tsk_Info", TSK_INFO_INDEX, .flags = "b");
+	set_task(60.0, "tsk_Info", TSK_INFO_INDEX, .flags = "b");
 
 	return !bool:Error;
 }
