@@ -4,8 +4,8 @@
 */
 
 const port = 1337;
-const targetChannels = ["add as many", "as you want"];
-const inputChannels = ["ALL"]; // leave it so for all, put respectable indexes for specific channels
+const targetChannels = ["add as many", "as you want"]; // (channel INDEX)
+const inputChannels = ["ALL"]; // (channel INDEX) leave it so for all, put respectable indexes for specific channels
 
 const auth = require("./auth.json");
 const net = require("net");
@@ -54,7 +54,7 @@ function initializeServer()
 			if (msg.author.bot || (inputChannels[0] != "ALL" && !inputChannels.includes(msg.channel.id)))
 				return;
 			
-			socket.write("(&x03" + msg.author.username + "&x01 - &x03#" + msg.channel.name + "&x01): &x04" + msg);
+			socket.write("(&x03" + msg.author.username + "&x01 - &x03#" + msg.channel.name + "&x01): &x04" + msg.content);
 		});
 	});
 
