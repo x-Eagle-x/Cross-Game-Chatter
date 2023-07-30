@@ -14,6 +14,7 @@ const discord = require("discord.js")
 require("events").EventEmitter.prototype._maxListeners = 0;
 
 const bot = new discord.Client({token: auth.token, autorun: true});
+bot.setMaxListeners(0);
 bot.login(auth.token);
 
 var message;
